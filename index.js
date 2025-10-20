@@ -35,6 +35,7 @@ function convertTimeToWords(time) {
     "twenty nine",
   ];
 
+  // Special cases (can remove these since they're checked inside calculateTimeWord too)
   if (time === "00:00") {
     return "midnight";
   }
@@ -43,41 +44,30 @@ function convertTimeToWords(time) {
     return "midday";
   }
 
-  function getWordForSpecific(mins) {
-    if (mins === 15) return "quarter";
-    if (mins === 30) return "half";
-  }
-
   function calculateTimeWord() {
-    const mins = Number(minutes);
+    const numHour = Number(hour);
+    const numMinutes = Number(minutes);
 
-    const calculatedHour = mins < 30 ? Number(hour) : Number(hour) + 1;
-    const hourWord = numberWords[Number(calculatedHour)];
-    const leftMinsTohour = 60 - mins;
+    if (numMinutes === 0) {
+      return `${numberWords[numHour]} o'clock`;
+    }
 
-    const miniuteWord =
-      mins === 15 || mins === 30
-        ? getWordForSpecific(mins)
-        : leftMinsTohour < 30
-        ? numberWords[leftMinsTohour + 1]
-        : numberWords[mins];
+    const nextHour = numHour === 23 ? 0 : numHour + 1;
+    const minutesToHour = 60 - numMinutes;
 
-    const formattedWord =
-      mins === 0
-        ? `${hourWord} o'clock`
-        : mins < 30
-        ? `${hourWord} past ${miniuteWord} `
-        : `${
-            mins === 15 || mins === 30
-              ? miniuteWord
-              : numberWords[leftMinsTohour]
-          } to ${hourWord}`;
+    if (numMinutes === 15) return `quarter past ${numberWords[numHour]}`;
+    if (numMinutes === 30) return `half past ${numberWords[numHour]}`;
+    if (numMinutes === 45) return `quarter to ${numberWords[nextHour]}`;
 
-    return formattedWord;
+    if (numMinutes < 30) {
+      return `${numberWords[numMinutes]} past ${numberWords[numHour]}`;
+    } else {
+      return `${numberWords[minutesToHour]} to ${numberWords[nextHour]}`;
+    }
   }
 
   return calculateTimeWord();
 }
 
-console.log(convertTimeToWords("21:31"));
+console.log(convertTimeToWords("00:00"));
 module.exports = { convertTimeToWords };
