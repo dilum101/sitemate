@@ -35,7 +35,6 @@ function convertTimeToWords(time) {
     "twenty nine",
   ];
 
-  // Special cases (can remove these since they're checked inside calculateTimeWord too)
   if (time === "00:00") {
     return "midnight";
   }
